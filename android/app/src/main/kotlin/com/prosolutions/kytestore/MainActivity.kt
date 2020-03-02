@@ -1,4 +1,4 @@
-package com.example.multi_store
+package com.prosolutions.kytestore
 
 import androidx.annotation.NonNull;
 import io.flutter.embedding.android.FlutterActivity

@@ -1,6 +1,6 @@
-# multi_store
+# kytestore
 
-A new Flutter project.
+Aplicacion similar a kyte
 
 ## Getting Started
 
