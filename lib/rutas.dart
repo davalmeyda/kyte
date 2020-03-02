@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:multi_store/Views/vender/vender_view.dart';
+import 'package:kytestore/Views/vender/vender_view.dart';
 
 Map<String, WidgetBuilder> getRutas() {
   return {    

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:multi_store/rutas.dart';
+import 'package:kytestore/rutas.dart';
 
 void main() => runApp(MyApp());
 

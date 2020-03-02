@@ -1,6 +1,6 @@
 import 'dart:ui';
-import 'package:multi_store/Views/vender/tab_widget.dart';
-import 'package:multi_store/navigation_widget.dart';
+import 'package:kytestore/Views/vender/tab_widget.dart';
+import 'package:kytestore/navigation_widget.dart';
 import 'package:flutter/material.dart';
 
 class VenderView extends StatefulWidget {
