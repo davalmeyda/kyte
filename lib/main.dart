@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kytestore/constants/configuraciones.dart';
 import 'package:kytestore/rutas.dart';
 
 void main() => runApp(MyApp());
@@ -9,11 +10,11 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Store',
       debugShowCheckedModeBanner: false,
-      initialRoute: 'venderView',
+      initialRoute: 'loginView',
       routes: getRutas(),
       theme: ThemeData(
         primaryColor: Colors.white,
-        accentColor: Color(0xff2dd1ac),
+        accentColor: Color(ConstConfiguraciones.colorKyte),
         textTheme: TextTheme(
           title: TextStyle(
             color: Colors.black54,

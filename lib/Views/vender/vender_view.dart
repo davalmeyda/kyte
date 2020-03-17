@@ -1,7 +1,8 @@
 import 'dart:ui';
 import 'package:kytestore/Views/vender/tab_widget.dart';
-import 'package:kytestore/navigation_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:kytestore/componentes/menu/navigation_widget.dart';
 
 class VenderView extends StatefulWidget {
   const VenderView({Key key}) : super(key: key);
@@ -13,6 +14,7 @@ class VenderView extends StatefulWidget {
 class _VenderViewState extends State<VenderView>
     with SingleTickerProviderStateMixin {
   TabController _tabController;
+  DateTime currentBackPressTime;
 
   final List<Tab> productos = <Tab>[
     Tab(text: 'TODOS'),
@@ -50,17 +52,32 @@ class _VenderViewState extends State<VenderView>
           _nuevoClienteWidget(),
         ],
       ),
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          TabWidget(),
-          TabWidget(),
-          TabWidget(),
-        ],
+      body: WillPopScope(
+        onWillPop: onWillPop,
+              child: TabBarView(
+          controller: _tabController,
+          children: [
+            TabWidget(),
+            TabWidget(),
+            TabWidget(),
+          ],
+        ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: _floatWidget(),
     );
+  }
+
+  // BOTON DE RETOCESO EN DOS TIEMPOS
+  Future<bool> onWillPop() {
+    DateTime now = DateTime.now();
+    if (currentBackPressTime == null || 
+        now.difference(currentBackPressTime) > Duration(seconds: 2)) {
+      currentBackPressTime = now;
+      Fluttertoast.showToast(msg: "Presione dos veces para salir");
+      return Future.value(false);
+    }
+    return Future.value(true);
   }
 
   Widget _nuevoClienteWidget() {
