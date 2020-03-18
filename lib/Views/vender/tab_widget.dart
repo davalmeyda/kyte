@@ -82,7 +82,7 @@ class TabWidget extends StatelessWidget {
               ? productosProviders
                   .traerProductos(_bloqueProductoVacioWidget(agregar: true))
               : ventasProvider
-                  .traerProductosCategoria(categoria.idCategorias.toString( )),
+                  .traerProductosCategoria(categoria.idCategorias.toString( ),_bloqueProductoVacioWidget(agregar: true)),
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             if (snapshot.data != null) {
               if (snapshot.data.length == 0) {

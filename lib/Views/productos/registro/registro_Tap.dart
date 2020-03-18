@@ -333,12 +333,14 @@ class _RegistroViewState extends State<RegistroView> {
   }
 
   void _openCamera(BuildContext context) async {
-    var picture = await ImagePicker.pickImage(
-        source: ImageSource.camera, maxHeight: 664, maxWidth: 1268);
-    this.setState(() {
-      imageFile = picture;
-    });
-    Navigator.of(context).pop();
+    try {
+      var picture = await ImagePicker.pickImage(
+          source: ImageSource.camera, maxHeight: 664, maxWidth: 1268);
+      this.setState(() {
+        imageFile = picture;
+      });
+      Navigator.of(context).pop();
+    } catch (e) {}
   }
 
   void guardarProducto() async {
