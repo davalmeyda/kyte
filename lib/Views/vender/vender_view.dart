@@ -1,9 +1,12 @@
 import 'dart:ui';
+import 'package:kytestore/Models/CategoriaModel.dart';
 import 'package:kytestore/Providers/ProductosProvider.dart';
+import 'package:kytestore/Providers/VentasProvider.dart';
 import 'package:kytestore/Views/vender/tab_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:kytestore/componentes/menu/navigation_widget.dart';
+import 'package:kytestore/estados/estados.dart';
 
 class VenderView extends StatefulWidget {
   const VenderView({Key key}) : super(key: key);
@@ -16,59 +19,83 @@ class _VenderViewState extends State<VenderView>
     with SingleTickerProviderStateMixin {
   TabController _tabController;
   DateTime currentBackPressTime;
+  List<CategoriaModel> categorias = new List<CategoriaModel>();
 
-  ProductosProviders productosProviders = new ProductosProviders();  
+  VentasProvider ventasProvider = new VentasProvider();
+  ProductosProviders productosProviders = new ProductosProviders();
 
-  final List<Tab> productos = <Tab>[
+  List<Tab> productos = <Tab>[
     Tab(text: 'TODOS'),
-    Tab(text: 'TECLADOS'),
-    Tab(text: 'MONITORES'),
   ];
 
   @override
-  void initState() {    
+  void initState() {
     super.initState();
-    _tabController = TabController(vsync: this, length: productos.length);
+    inicio();
     // productosProviders.traerProductos();
   }
 
-  @override
-  Widget build(BuildContext context) {   
+  void inicio() async {
+    Estados estados = Estados();
+    categorias = await productosProviders.traerCategorias();
+    estados.listaCategoria = categorias;
+    productos = categorias.map((categoria) {
+      return Tab(
+        text: categoria.nombreCategoria,
+      );
+    }).toList();
+    productos.insert(0, Tab(text: "Productos",));
+    setState(() {});
+  }
 
-    return Scaffold(
-      drawer: NavigationWidget(),
-      appBar: AppBar(
-        bottom: TabBar(
-          controller: _tabController,
-          tabs: productos,
-          // isScrollable: true,
-          indicatorColor: Theme.of(context).accentColor,
-          labelColor: Theme.of(context).accentColor,
-          unselectedLabelColor: Theme.of(context).textTheme.title.color,
-        ),
-        elevation: 0.0,
-        title: Text(
-          'Vender',
-          style: Theme.of(context).textTheme.title,
-        ),
-        actions: <Widget>[
-          _nuevoClienteWidget(),
-        ],
-      ),
-      body: WillPopScope(
-        onWillPop: onWillPop,
-        child: TabBarView(
-          controller: _tabController,
-          children: [
-            TabWidget(),
-            TabWidget(),
-            TabWidget(),
+  @override
+  Widget build(BuildContext context) {
+    return DefaultTabController(
+      length: productos.length,
+      child: Scaffold(
+        drawer: NavigationWidget(),
+        appBar: AppBar(
+          bottom: TabBar(
+            tabs: productos,
+            isScrollable: true,
+            indicatorColor: Theme.of(context).accentColor,
+            labelColor: Theme.of(context).accentColor,
+            unselectedLabelColor: Theme.of(context).textTheme.title.color,
+          ),
+          elevation: 0.0,
+          title: Text(
+            'Vender',
+            style: Theme.of(context).textTheme.title,
+          ),
+          actions: <Widget>[
+            _nuevoClienteWidget(),
           ],
         ),
+        body: WillPopScope(
+          onWillPop: onWillPop,
+          child: TabBarView(
+            children: listaTab(),
+          ),
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+        floatingActionButton: _floatWidget(),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: _floatWidget(),
     );
+  }
+
+  List<Widget> listaTab() {
+    List<Widget> tabs = new List<Widget>();
+    if (categorias.length == 0) {
+      return [
+        TabWidget(null),
+      ];
+    } else {
+      tabs.add(TabWidget(null));
+      for (CategoriaModel tab in categorias) {
+        tabs.add(TabWidget(tab));
+      }
+    }
+    return tabs;
   }
 
   // BOTON DE RETOCESO EN DOS TIEMPOS

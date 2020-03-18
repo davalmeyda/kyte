@@ -1,15 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:kytestore/Models/CategoriaModel.dart';
 import 'package:kytestore/Providers/ProductosProvider.dart';
+import 'package:kytestore/Providers/VentasProvider.dart';
 import 'package:kytestore/componentes/productos/ComponentProductos.dart';
 import 'package:kytestore/constants/configuraciones.dart';
 import 'package:kytestore/componentes/ventas/multiplicadorIcon_widget.dart';
 
 class TabWidget extends StatelessWidget {
+  TabWidget(this.categoria, {Key key}) : super(key: key);
+
+  final CategoriaModel categoria;
+
   void accionAgregar(context) {
     Navigator.pushNamed(context, "nuevoProducto");
   }
 
-  ProductosProviders productosProviders = new ProductosProviders();
+  final productosProviders = new ProductosProviders();
+  final ventasProvider = new VentasProvider();
   @override
   Widget build(BuildContext context) {
     Widget _bloqueProductoVacioWidget({bool agregar = false}) {
@@ -71,8 +78,11 @@ class TabWidget extends StatelessWidget {
       body: Container(
         color: Theme.of(context).primaryColor,
         child: FutureBuilder(
-          future: productosProviders
-              .traerProductos(_bloqueProductoVacioWidget(agregar: true)),
+          future: categoria == null
+              ? productosProviders
+                  .traerProductos(_bloqueProductoVacioWidget(agregar: true))
+              : ventasProvider
+                  .traerProductosCategoria(categoria.idCategorias.toString( )),
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             if (snapshot.data != null) {
               if (snapshot.data.length == 0) {
@@ -92,7 +102,7 @@ class TabWidget extends StatelessWidget {
                   itemBuilder: (BuildContext context, int index) {
                     if (index + 1 == snapshot.data.length) {
                       return snapshot.data[index];
-                    }                   
+                    }
                     return ComponentProductos(
                       snapshot.data[index].ruta,
                       snapshot.data[index].nombreProducto,
