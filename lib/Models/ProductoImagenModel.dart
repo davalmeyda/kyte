@@ -1,3 +1,5 @@
+import 'package:kytestore/constants/configuraciones.dart';
+
 class ProductoImagenModel {
   int idProductos;
   String nombreProducto;
@@ -27,6 +29,13 @@ class ProductoImagenModel {
       this.idProducto});
 
   ProductoImagenModel.fromJson(Map<String, dynamic> json) {
+    ruta = ConstConfiguraciones.urlBackend +
+                ConstConfiguraciones.urlImagen +
+                (json['Ruta'] ==
+            null
+        ? "ERROR.jpg"
+        : json['Ruta']);
+
     idProductos = json['idProductos'];
     nombreProducto = json['NombreProducto'];
     precio = json['Precio'];
@@ -37,7 +46,6 @@ class ProductoImagenModel {
     exhibir = json['Exhibir'];
     idTienda = json['idTienda'];
     idImagen = json['idImagen'];
-    ruta = json['Ruta'];
     idProducto = json['idProducto'];
   }
 

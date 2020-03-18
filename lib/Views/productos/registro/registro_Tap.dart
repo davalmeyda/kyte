@@ -1,12 +1,14 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:barcode_scan/barcode_scan.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:kytestore/Models/TiendaModel.dart';
 import 'package:kytestore/Providers/ProductosProvider.dart';
 import 'package:kytestore/componentes/productos/ComponentProductos.dart';
 import 'package:kytestore/constants/configuraciones.dart';
+import 'package:kytestore/estados/estados.dart';
 
 class RegistroView extends StatefulWidget {
   RegistroView({Key key}) : super(key: key);
@@ -26,6 +28,8 @@ class _RegistroViewState extends State<RegistroView> {
   ProductosProviders productosProviders = new ProductosProviders();
   File imageFile;
 
+  Estados estado = Estados();
+
   @override
   void initState() {
     // TODO: implement initState
@@ -41,6 +45,10 @@ class _RegistroViewState extends State<RegistroView> {
 
   @override
   Widget build(BuildContext context) {
+    _categoria.text = estado.categoria.nombreCategoria == null
+        ? ""
+        : estado.categoria.nombreCategoria;
+
     return Container(
       child: ListView(
         children: <Widget>[
@@ -87,6 +95,7 @@ class _RegistroViewState extends State<RegistroView> {
                     Container(
                       padding: EdgeInsets.only(top: 20, left: 20, right: 20),
                       child: TextField(
+                        textCapitalization: TextCapitalization.sentences,
                         controller: _nombreProducto,
                         decoration: InputDecoration(
                           hintStyle: TextStyle(color: Colors.black38),
@@ -99,6 +108,7 @@ class _RegistroViewState extends State<RegistroView> {
                       padding: EdgeInsets.only(
                           top: 20, left: 20, right: 20, bottom: 20),
                       child: TextField(
+                        keyboardType: TextInputType.number,
                         controller: _precio,
                         decoration: InputDecoration(
                           hintStyle: TextStyle(color: Colors.black38),
@@ -114,34 +124,29 @@ class _RegistroViewState extends State<RegistroView> {
                 title: Text("Opcionales"),
                 children: <Widget>[
                   // CATEGORIA
-                  GestureDetector(
-                    onTap: nextCategoria,
-                    child: Container(
-                      padding: EdgeInsets.only(left: 20, right: 20),
-                      child: TextField(
-                        controller: _categoria,
-                        enabled: false,
-                        decoration: InputDecoration(
-                          suffixIcon: Icon(Icons.arrow_forward_ios),
-                          hintStyle: TextStyle(color: Colors.black38),
-                          hintText: "Categoria",
-                        ),
+                  Container(
+                    padding: EdgeInsets.only(left: 20, right: 20),
+                    // TODO: eliminar la edicion del texto
+                    child: TextField(
+                      onTap: nextCategoria,
+                      controller: _categoria,
+                      decoration: InputDecoration(
+                        suffixIcon: Icon(Icons.arrow_forward_ios),
+                        hintStyle: TextStyle(color: Colors.black38),
+                        hintText: "Categoria",
                       ),
                     ),
                   ),
                   // DESCRIPCION
-                  GestureDetector(
-                    onTap: nextDescripcion,
-                    child: Container(
-                      padding: EdgeInsets.only(top: 10, left: 20, right: 20),
-                      child: TextField(
-                        controller: _descripcion,
-                        enabled: false,
-                        decoration: InputDecoration(
-                          suffixIcon: Icon(Icons.arrow_forward_ios),
-                          hintStyle: TextStyle(color: Colors.black38),
-                          hintText: "Descripción",
-                        ),
+                  Container(
+                    padding: EdgeInsets.only(top: 10, left: 20, right: 20),
+                    child: TextField(
+                      onTap: nextDescripcion,
+                      controller: _descripcion,
+                      decoration: InputDecoration(
+                        suffixIcon: Icon(Icons.arrow_forward_ios),
+                        hintStyle: TextStyle(color: Colors.black38),
+                        hintText: "Descripción",
                       ),
                     ),
                   ),
@@ -164,6 +169,7 @@ class _RegistroViewState extends State<RegistroView> {
                   Container(
                     padding: EdgeInsets.only(top: 10, left: 20, right: 20),
                     child: TextField(
+                      keyboardType: TextInputType.number,
                       controller: _costo,
                       decoration: InputDecoration(
                         hintStyle: TextStyle(color: Colors.black38),
@@ -225,11 +231,65 @@ class _RegistroViewState extends State<RegistroView> {
   }
 
   // TODO: implementar codigo de barra
-  void codigoBarra() {}
+  void codigoBarra() async {
+    print("qr");
+
+    try {
+      String barcode = await BarcodeScanner.scan();
+      _codigo.text = barcode;
+    } catch (e) {
+      print('The user did not grant the camera permission!');
+
+      print('Unknown error: $e');
+    }
+  }
+
   // TODO: implementar ruta Categoria
-  void nextCategoria() {}
+  void nextCategoria() {
+    Navigator.pushNamed(context, 'rutaCategoria');
+  }
+
   // TODO: implementar ruta Descripcion
-  void nextDescripcion() {}
+  void nextDescripcion() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // return object of type Dialog
+        return AlertDialog(
+          title: new Text("Agregar Descripcion"),
+          content: TextField(
+            autofocus: true,
+            textCapitalization: TextCapitalization.sentences,
+            keyboardType: TextInputType.multiline,
+            maxLines: null,
+            controller: _descripcion,
+            decoration: InputDecoration(
+              hintStyle: TextStyle(color: Colors.black38),
+              hintText: "Ingrese la descripcion",
+            ),
+          ),
+          actions: <Widget>[
+            // usually buttons at the bottom of the dialog
+
+            FlatButton(
+              child: new Text("Cancelar"),
+              onPressed: () {
+                _descripcion.text = "";
+                Navigator.of(context).pop();
+              },
+            ),
+            FlatButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text("Aceptar"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   // TODO: implementar ruta Unidad
   void nextUnidad() {}
 
@@ -264,7 +324,8 @@ class _RegistroViewState extends State<RegistroView> {
   }
 
   void _openGallery(BuildContext context) async {
-    var picture = await ImagePicker.pickImage(source: ImageSource.gallery, maxHeight: 664, maxWidth: 1268);
+    var picture = await ImagePicker.pickImage(
+        source: ImageSource.gallery, maxHeight: 664, maxWidth: 1268);
     this.setState(() {
       imageFile = picture;
     });
@@ -272,13 +333,13 @@ class _RegistroViewState extends State<RegistroView> {
   }
 
   void _openCamera(BuildContext context) async {
-    var picture = await ImagePicker.pickImage(source: ImageSource.camera, maxHeight: 664, maxWidth: 1268);
+    var picture = await ImagePicker.pickImage(
+        source: ImageSource.camera, maxHeight: 664, maxWidth: 1268);
     this.setState(() {
       imageFile = picture;
     });
     Navigator.of(context).pop();
   }
- 
 
   void guardarProducto() async {
     TiendaModel tienda = TiendaModel();
@@ -291,10 +352,14 @@ class _RegistroViewState extends State<RegistroView> {
     }
 
     final String resultado = await productosProviders.agregarProducto(
-        nombre: _nombreProducto.text,
-        precio: _precio.text,
-        idTienda: tienda.idTiendas.toString(),
-        imagen: base64Image);
+      nombre: _nombreProducto.text,
+      precio: _precio.text,
+      idTienda: tienda.idTiendas.toString(),
+      imagen: base64Image,
+      idCategoria: estado.categoria.idCategorias.toString(),
+      descripcion: _descripcion.text,
+      codigoBarra: _codigo.text,
+    );
 
     if (resultado == "Agregado") {
       Navigator.pop(context);

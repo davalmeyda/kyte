@@ -29,7 +29,7 @@ class _VenderViewState extends State<VenderView>
   void initState() {    
     super.initState();
     _tabController = TabController(vsync: this, length: productos.length);
-    productosProviders.traerProductos();
+    // productosProviders.traerProductos();
   }
 
   @override

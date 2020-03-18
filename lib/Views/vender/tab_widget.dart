@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:kytestore/Providers/ProductosProvider.dart';
 import 'package:kytestore/componentes/productos/ComponentProductos.dart';
 import 'package:kytestore/constants/configuraciones.dart';
+import 'package:kytestore/componentes/ventas/multiplicadorIcon_widget.dart';
 
 class TabWidget extends StatelessWidget {
   void accionAgregar(context) {
     Navigator.pushNamed(context, "nuevoProducto");
   }
 
+  ProductosProviders productosProviders = new ProductosProviders();
   @override
   Widget build(BuildContext context) {
     Widget _bloqueProductoVacioWidget({bool agregar = false}) {
@@ -29,6 +32,25 @@ class TabWidget extends StatelessWidget {
       );
     }
 
+    Widget grid() {
+      return GridView.count(
+        primary: false,
+        padding: const EdgeInsets.only(top: 0, right: 10, left: 10),
+        crossAxisSpacing: 8,
+        mainAxisSpacing: 8,
+        crossAxisCount: 3,
+        childAspectRatio: 1.08,
+        children: <Widget>[
+          _bloqueProductoVacioWidget(agregar: true),
+          _bloqueProductoVacioWidget(),
+          _bloqueProductoVacioWidget(),
+          _bloqueProductoVacioWidget(),
+          _bloqueProductoVacioWidget(),
+          _bloqueProductoVacioWidget(),
+        ],
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -43,54 +65,48 @@ class TabWidget extends StatelessWidget {
               onPressed: () {}),
           IconButton(icon: Icon(Icons.flash_on), onPressed: () {}),
           IconButton(icon: Icon(Icons.list), onPressed: () {}),
-          _multiplicadorIconWidget(),
+          MultiplicadorIconWidget(),
         ],
       ),
       body: Container(
         color: Theme.of(context).primaryColor,
-        child: GridView.count(
-          primary: false,
-          padding: const EdgeInsets.only(top: 0, right: 10, left: 10),
-          crossAxisSpacing: 8,
-          mainAxisSpacing: 8,
-          crossAxisCount: 3,
-          childAspectRatio: 1.08,
-          children: <Widget>[
-            _bloqueProductoVacioWidget(agregar: true),
-            _bloqueProductoVacioWidget(),
-            ComponentProductos(
-                "https://hardzone.es/app/uploads-hardzone.es/2019/10/Teclado-mec%C3%A1nico.jpg","Monitor","22.2"),
-            _bloqueProductoVacioWidget(),
-            _bloqueProductoVacioWidget(),
-            _bloqueProductoVacioWidget(),
-            _bloqueProductoVacioWidget(),
-            _bloqueProductoVacioWidget(),
-            _bloqueProductoVacioWidget(),
-            _bloqueProductoVacioWidget(),
-            _bloqueProductoVacioWidget(),
-          ],
-        ),
-      ),
-    );
-  }
+        child: FutureBuilder(
+          future: productosProviders
+              .traerProductos(_bloqueProductoVacioWidget(agregar: true)),
+          builder: (BuildContext context, AsyncSnapshot snapshot) {
+            if (snapshot.data != null) {
+              if (snapshot.data.length == 0) {
+                return grid();
+              }
 
-  Widget _multiplicadorIconWidget() {
-    return GestureDetector(
-      onTap: () {
-        //TODO: Implementar boton cambiar multiplicador para agregar productos
-        print('tab');
-      },
-      child: Center(
-        child: Container(
-          margin: EdgeInsets.only(right: 11, left: 10),
-          padding: EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-          decoration: BoxDecoration(
-            border: Border.all(),
-          ),
-          child: Text(
-            '1 X',
-            style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
-          ),
+              return Container(
+                padding: const EdgeInsets.only(top: 0, right: 10, left: 10),
+                child: GridView.builder(
+                  itemCount: snapshot.data.length,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisSpacing: 8,
+                    mainAxisSpacing: 8,
+                    crossAxisCount: 3,
+                    childAspectRatio: 1.08,
+                  ),
+                  itemBuilder: (BuildContext context, int index) {
+                    if (index + 1 == snapshot.data.length) {
+                      return snapshot.data[index];
+                    }                   
+                    return ComponentProductos(
+                      snapshot.data[index].ruta,
+                      snapshot.data[index].nombreProducto,
+                      snapshot.data[index].precio.toString(),
+                    );
+                  },
+                ),
+              );
+            } else {
+              return Center(
+                child: CircularProgressIndicator(),
+              );
+            }
+          },
         ),
       ),
     );
