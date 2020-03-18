@@ -1,21 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:kytestore/componentes/productos/ComponentProductos.dart';
+import 'package:kytestore/constants/configuraciones.dart';
 
 class TabWidget extends StatelessWidget {
+  void accionAgregar(context) {
+    Navigator.pushNamed(context, "nuevoProducto");
+  }
+
   @override
   Widget build(BuildContext context) {
     Widget _bloqueProductoVacioWidget({bool agregar = false}) {
-      return Container(
-        height: 80,
-        color: Colors.black12,
-        child: Center(
-          child: agregar
-              ? Text(
-                  '+',
-                  style: TextStyle(
-                      fontSize: 60,
-                      color: Theme.of(context).textTheme.title.color),
-                )
-              : null,
+      return GestureDetector(
+        onTap: agregar ? () => accionAgregar(context) : () {},
+        child: Container(
+          height: 80,
+          color: Color(ConstConfiguraciones.colorClaro1),
+          child: Center(
+            child: agregar
+                ? Text(
+                    '+',
+                    style: TextStyle(
+                        fontSize: 60,
+                        color: Theme.of(context).textTheme.title.color),
+                  )
+                : null,
+          ),
         ),
       );
     }
@@ -49,6 +58,8 @@ class TabWidget extends StatelessWidget {
           children: <Widget>[
             _bloqueProductoVacioWidget(agregar: true),
             _bloqueProductoVacioWidget(),
+            ComponentProductos(
+                "https://hardzone.es/app/uploads-hardzone.es/2019/10/Teclado-mec%C3%A1nico.jpg","Monitor","22.2"),
             _bloqueProductoVacioWidget(),
             _bloqueProductoVacioWidget(),
             _bloqueProductoVacioWidget(),

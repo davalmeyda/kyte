@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kytestore/constants/configuraciones.dart';
 
 class NavigationWidget extends StatelessWidget {
   const NavigationWidget({Key key}) : super(key: key);
@@ -33,7 +34,7 @@ class NavigationWidget extends StatelessWidget {
       iconColor: Theme.of(context).textTheme.subtitle.color,
       child: Drawer(
         child: Ink(
-          color: Color(0xff363f4e),
+          color: Color(ConstConfiguraciones.colorOscuro),
           child: ListView(
             padding: EdgeInsets.zero,
             children: <Widget>[

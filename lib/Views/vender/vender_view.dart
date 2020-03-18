@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:kytestore/Providers/ProductosProvider.dart';
 import 'package:kytestore/Views/vender/tab_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -16,6 +17,8 @@ class _VenderViewState extends State<VenderView>
   TabController _tabController;
   DateTime currentBackPressTime;
 
+  ProductosProviders productosProviders = new ProductosProviders();  
+
   final List<Tab> productos = <Tab>[
     Tab(text: 'TODOS'),
     Tab(text: 'TECLADOS'),
@@ -23,14 +26,15 @@ class _VenderViewState extends State<VenderView>
   ];
 
   @override
-  void initState() {
-    // TODO: implement initState
+  void initState() {    
     super.initState();
     _tabController = TabController(vsync: this, length: productos.length);
+    productosProviders.traerProductos();
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) {   
+
     return Scaffold(
       drawer: NavigationWidget(),
       appBar: AppBar(
@@ -47,14 +51,13 @@ class _VenderViewState extends State<VenderView>
           'Vender',
           style: Theme.of(context).textTheme.title,
         ),
-        
         actions: <Widget>[
           _nuevoClienteWidget(),
         ],
       ),
       body: WillPopScope(
         onWillPop: onWillPop,
-              child: TabBarView(
+        child: TabBarView(
           controller: _tabController,
           children: [
             TabWidget(),
@@ -71,7 +74,7 @@ class _VenderViewState extends State<VenderView>
   // BOTON DE RETOCESO EN DOS TIEMPOS
   Future<bool> onWillPop() {
     DateTime now = DateTime.now();
-    if (currentBackPressTime == null || 
+    if (currentBackPressTime == null ||
         now.difference(currentBackPressTime) > Duration(seconds: 2)) {
       currentBackPressTime = now;
       Fluttertoast.showToast(msg: "Presione dos veces para salir");
@@ -91,7 +94,7 @@ class _VenderViewState extends State<VenderView>
         onPressed: () {},
       ),
     );
-  }  
+  }
 
   Widget _floatWidget() {
     return Container(

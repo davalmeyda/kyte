@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
-import 'componentes/curva.dart';
-import 'componentes/logo.dart';
+import 'package:kytestore/Providers/LoginProvider.dart';
+import 'package:kytestore/componentes/Login/curva.dart';
+import 'package:kytestore/componentes/Login/logo.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({Key key}) : super(key: key);
@@ -15,6 +15,8 @@ class _LoginViewState extends State<LoginView> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   TextEditingController _emailController = new TextEditingController();
   TextEditingController _passwordController = new TextEditingController();
+
+  LoginProvider loginProvider = new LoginProvider();
 
   // Boton Login
   Widget botonLogin(String text, Color splashColor, Color highlightColor,
@@ -156,6 +158,7 @@ class _LoginViewState extends State<LoginView> {
     try {
       String resultado =
           await signIn(_emailController.text, _passwordController.text);
+      await loginProvider.rolUsuario(resultado);
       Navigator.pushReplacementNamed(context, "venderView");
     } catch (error) {
       _showDialog(content: error, title: "error");
