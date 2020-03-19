@@ -18,20 +18,21 @@ class ProductosProviders {
       ConstConfiguraciones.urlBackend + "agregarCategoria.php";
   TiendaModel tienda = TiendaModel();
 
-  Future agregarProducto(
-      {String nombre,
-      String precio,
-      String idTienda,
-      String idCategoria = "1",
-      String descripcion = "",
-      String codigoBarra = "",
-      String unidad = "",
-      String exhibir = "1",
-      String imagen}) async {
-
-      if(imagen==null){
-        imagen = "vacio";
-      }
+  Future agregarProducto({
+    String nombre,
+    String precio,
+    String idTienda,
+    String idCategoria = "1",
+    String descripcion = "",
+    String codigoBarra = "",
+    String unidad = "",
+    String exhibir = "1",
+    String imagen,
+    String costo = "0",
+  }) async {
+    if (imagen == null) {
+      imagen = "vacio";
+    }
     final response = await http.post(urlAgregarProducto, body: {
       "nombreProducto": nombre,
       "precio": precio,
@@ -42,6 +43,7 @@ class ProductosProviders {
       "unidad": unidad,
       "exhibir": exhibir,
       "imagen": imagen,
+      "costo": costo,
     });
     if (response.statusCode == 200) {
       print(response.body);

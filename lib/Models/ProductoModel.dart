@@ -1,7 +1,8 @@
 class ProductoModel {
   int idProductos;
   String nombreProducto;
-  int precio;
+  double precio;
+  double costo;
   int idCategoria;
   String descripcion;
   String codigoBarra;
@@ -22,14 +23,15 @@ class ProductoModel {
 
   ProductoModel.fromJson(Map<String, dynamic> json) {
     idProductos = json['idProductos'];
-    nombreProducto = json['NombreProducto'];
-    precio = json['Precio'];
+    nombreProducto = json['NombreProducto'];    
     idCategoria = json['idCategoria'];
     descripcion = json['Descripcion'];
     codigoBarra = json['CodigoBarra'];
     unidad = json['Unidad'];
     exhibir = json['Exhibir'];
     idTienda = json['idTienda'];
+    precio = double.parse(json['Precio'].toString());
+    costo = double.parse(json['Costo'].toString());
   }
 
   Map<String, dynamic> toJson() {
@@ -43,6 +45,7 @@ class ProductoModel {
     data['Unidad'] = this.unidad;
     data['Exhibir'] = this.exhibir;
     data['idTienda'] = this.idTienda;
+    data['idTienda'] = this.costo;
     return data;
   }
 }

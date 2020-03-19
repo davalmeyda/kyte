@@ -32,7 +32,6 @@ class _RegistroViewState extends State<RegistroView> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _nombreProducto.addListener(() {
       setState(() {});
@@ -230,7 +229,7 @@ class _RegistroViewState extends State<RegistroView> {
     );
   }
 
-  // TODO: implementar codigo de barra
+  // implementar codigo de barra
   void codigoBarra() async {
     print("qr");
 
@@ -244,12 +243,12 @@ class _RegistroViewState extends State<RegistroView> {
     }
   }
 
-  // TODO: implementar ruta Categoria
+  // implementar ruta Categoria
   void nextCategoria() {
     Navigator.pushNamed(context, 'rutaCategoria');
   }
 
-  // TODO: implementar ruta Descripcion
+  // implementar ruta Descripcion
   void nextDescripcion() {
     showDialog(
       context: context,
@@ -293,7 +292,7 @@ class _RegistroViewState extends State<RegistroView> {
   // TODO: implementar ruta Unidad
   void nextUnidad() {}
 
-  // TODO: implementar buscar imagen
+  // implementar buscar imagen
   Future<void> buscarImagen(BuildContext context) {
     return showDialog(
         context: context,
@@ -361,6 +360,7 @@ class _RegistroViewState extends State<RegistroView> {
       idCategoria: estado.categoria.idCategorias.toString(),
       descripcion: _descripcion.text,
       codigoBarra: _codigo.text,
+      costo: _costo.text,
     );
 
     if (resultado == "Agregado") {

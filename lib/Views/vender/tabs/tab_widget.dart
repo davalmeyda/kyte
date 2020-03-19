@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:kytestore/Models/CategoriaModel.dart';
+import 'package:kytestore/Models/ProductoImagenModel.dart';
+import 'package:kytestore/Models/ProductosCanastaModel.dart';
 import 'package:kytestore/Providers/ProductosProvider.dart';
 import 'package:kytestore/Providers/VentasProvider.dart';
 import 'package:kytestore/componentes/productos/ComponentProductos.dart';
 import 'package:kytestore/constants/configuraciones.dart';
 import 'package:kytestore/componentes/ventas/multiplicadorIcon_widget.dart';
+import 'package:kytestore/estados/estados.dart';
 
 class TabWidget extends StatelessWidget {
-  TabWidget(this.categoria, {Key key}) : super(key: key);
+  TabWidget(this.categoria, {Key key, this.funcion}) : super(key: key);
 
   final CategoriaModel categoria;
+  final Function funcion;
 
   void accionAgregar(context) {
     Navigator.pushNamed(context, "nuevoProducto");
@@ -67,9 +71,8 @@ class TabWidget extends StatelessWidget {
         elevation: 0.0,
         actions: <Widget>[
           IconButton(
-              icon: Image.network(
-                  'https://img.icons8.com/pastel-glyph/64/000000/barcode-scanner--v2.png'),
-              onPressed: () {}),
+              icon: Image.asset('assets/barcode.png'),
+              onPressed: () => nextCarritoQR(context)),
           IconButton(icon: Icon(Icons.flash_on), onPressed: () {}),
           IconButton(icon: Icon(Icons.list), onPressed: () {}),
           MultiplicadorIconWidget(),
@@ -81,8 +84,9 @@ class TabWidget extends StatelessWidget {
           future: categoria == null
               ? productosProviders
                   .traerProductos(_bloqueProductoVacioWidget(agregar: true))
-              : ventasProvider
-                  .traerProductosCategoria(categoria.idCategorias.toString( ),_bloqueProductoVacioWidget(agregar: true)),
+              : ventasProvider.traerProductosCategoria(
+                  categoria.idCategorias.toString(),
+                  _bloqueProductoVacioWidget(agregar: true)),
           builder: (BuildContext context, AsyncSnapshot snapshot) {
             if (snapshot.data != null) {
               if (snapshot.data.length == 0) {
@@ -107,6 +111,8 @@ class TabWidget extends StatelessWidget {
                       snapshot.data[index].ruta,
                       snapshot.data[index].nombreProducto,
                       snapshot.data[index].precio.toString(),
+                      funcionAgregarCarrito: () =>
+                          agregarCarrito(snapshot.data[index]),
                     );
                   },
                 ),
@@ -120,5 +126,14 @@ class TabWidget extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void agregarCarrito(ProductoImagenModel producto) {
+    ventasProvider.agregarCarrito(producto);
+    funcion();
+  }
+
+  void nextCarritoQR(context) {
+    Navigator.pushNamed(context, "rutaCarrito", arguments: {'qr': true});
   }
 }

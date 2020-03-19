@@ -3,7 +3,8 @@ import 'package:kytestore/constants/configuraciones.dart';
 class ProductoImagenModel {
   int idProductos;
   String nombreProducto;
-  int precio;
+  double precio;
+  double costo;
   int idCategoria;
   String descripcion;
   String codigoBarra;
@@ -38,7 +39,6 @@ class ProductoImagenModel {
 
     idProductos = json['idProductos'];
     nombreProducto = json['NombreProducto'];
-    precio = json['Precio'];
     idCategoria = json['idCategoria'];
     descripcion = json['Descripcion'];
     codigoBarra = json['CodigoBarra'];
@@ -47,6 +47,8 @@ class ProductoImagenModel {
     idTienda = json['idTienda'];
     idImagen = json['idImagen'];
     idProducto = json['idProducto'];
+    precio = double.parse(json['Precio'].toString());
+    costo = double.parse(json['Costo'].toString());
   }
 
   Map<String, dynamic> toJson() {
@@ -63,6 +65,7 @@ class ProductoImagenModel {
     data['idImagen'] = this.idImagen;
     data['Ruta'] = this.ruta;
     data['idProducto'] = this.idProducto;
+    data['Costo'] = this.costo;
     return data;
   }
 }
